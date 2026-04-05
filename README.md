@@ -1,4 +1,4 @@
-This project is the 3rd version of miniMAC, this time using [a crude PDK abstraction layer](https://github.com/YannGuidon/IHP_SG13_cells).
+This project is the 3rd version of miniMAC, but this time using [a crude PDK abstraction layer](https://github.com/YannGuidon/IHP_SG13_cells) and I'll make it work as intended.
 
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
