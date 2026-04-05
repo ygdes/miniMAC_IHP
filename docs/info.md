@@ -1,4 +1,4 @@
-Note: after the messy tapeout on iHP26a, porting to CMOS5L PDK.
+Note: This 3rd revision should work and be portable to IHP CMOS5L and G2.
 
 ## What is this miniMAC
 
