@@ -32,6 +32,6 @@ Two tiles are required to fit both the encoder and decoder. They can be used alo
 
 This version should finally work as intended, still using an experimental PDK under development. Later versions would add a FSM, some buffer SRAM and a proper PHY interface ((YGMII)[https://hackaday.io/project/205414-ygmii] is being designed).
 
-## TODO
+## TODO
 
 enable/disable Hammer with a separate RESET pin
