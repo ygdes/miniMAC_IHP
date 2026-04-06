@@ -5,10 +5,11 @@
 
 enable_bypass = True
 enable_Hammer_encode = False
-enable_Hammer_decode = True
+enable_Hammer_decode = False
 enable_Hammer_loopback = False
 enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
-Scrambling_gPEAC_direct = True
+RB1_Encode = True
+Scrambling_gPEAC_direct = False
 Scrambling_loopback = False
 
 import cocotb
@@ -105,7 +106,7 @@ vectors = [
 ["100011000001110011", "101100010000011011"],
 ["001110001011100000", "101111110000110100"]]
 
-sequence = [ # for the Hammer18 tests
+Hammer18_sequence = [ # for the Hammer18 tests
  10,      # index=10  ( out=in because the delay register is cleared)
  3147,
  228245,
@@ -205,6 +206,38 @@ Scrambler_vectors=[
 "110111110001111001",
 "100010110000101111"]
 
+RB1_vectors=[
+[     42,  224004],
+[  24455,  248417],
+[  48868,   10686],
+[  73281,   35100],
+[  97694,   59513],
+[ 122107,   83926],
+[  15448,  239411],
+[  39861,    1679],
+[  64274,   26093],
+[  88687,   50506],
+[ 113100,   74919],
+[   6441,  230404],
+[  30854,  254816],
+[  55267,   17085],
+[  79680,   41499],
+[ 104093,   65912],
+[ 128506,   90325],
+[  21847,  245810],
+[  46260,    8078],
+[  70673,   32492],
+[  95086,   56905],
+[ 119499,   81318],
+[  12840,  236803],
+[  37253,  261215],
+[  61666,   23484],
+[  86079,   47898],
+[ 110492,   72311],
+[   3833,  227796],
+[  28246,  252208],
+[  52659,   14477]
+]
 
 @cocotb.test()
 async def test_project(dut):
@@ -238,7 +271,7 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("Starting Hammer Encode Mode")
     i = 10
-    for x in sequence:
+    for x in Hammer18_sequence:
       await input_parameter(i, Encode, dut)
       t = await output_parameter(dut)
       print(str(i) + " : " + str(t) + "   expected "+ str(x))
@@ -250,7 +283,7 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("Starting Hammer Decode Mode")
     i = 10
-    for x in sequence:
+    for x in Hammer18_sequence:
       await input_parameter(x, Decode, dut)
       t = await output_parameter(dut)
       print(str(i) + " : " + str(t))
@@ -280,6 +313,21 @@ async def test_project(dut):
       # ænyway it's only a temporary test that will not work later
     await ClockCycles(dut.clk, 6)
 
+  ######################################################################
+  # Testing intermediary versions of gPEAC
+
+  if RB1_Encode == True:
+    await reset_state(dut)  
+    dut._log.info("RB1 Scrambling Mode")
+    for x in RB1_vectors:
+      v = x[0]
+      #print("expected " + bin(v + (1 << 20)))
+      await input_parameter(v, Encode, dut)  # Encode mode
+      o = await output_parameter(dut)
+      #print(" - found " + bin(o + (1 << 20)))
+      print(" - in: " + v + "   found: " + o + "   expected: " + x[1])
+      #assert o = x[1]
+    await ClockCycles(dut.clk, 6)
 
   ######################################################################
   # The following code is used to test the whole Hammer+gPEAC circuit
