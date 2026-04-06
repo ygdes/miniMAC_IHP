@@ -165,19 +165,19 @@ module gPEAC18_scrambler_RB1(
   wire [17:0] OPM;
   wire [17:0] OPY2;
   wire [17:0] ResX;
-  wire CX, newCX, CinX, CoutX;
+  wire CX, CinX, CoutX;
   
   // X path:
   assign OPM = {1'b0, Message_in};
-  assign OPY = Y;
-  assign Cin = CX;
+  assign OPY2 = Y;
+  assign CinX = CX;
   
-  Add18 AddX(.A(OPM), .B(OPY), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  Add18 AddX(.A(OPM), .B(OPY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
 
   Register_InitX RegX(.clk(clk), .rst(rst), .en(Phase0), .D(ResX), .Q(X));   // .D(Phase0) /!\
   sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(CoutX), .SCE(Phase0), .RESET_B(rst), .CLK(clk));
 
-  Register_InitX RegY(.clk(clk), .rst(rst), .en(EnY), .D(Y), .Q(Y));   // .D(Y) /!\
+  Register_InitX RegY(.clk(clk), .rst(rst), .en(Phase1), .D(Y), .Q(Y));   // .D(Y) /!\
 endmodule
 
 ////////////////////////////////////////////////////////////////////
@@ -246,14 +246,14 @@ module gPEAC18_descrambler_RB1(
   assign OPB2 = ~B;
   assign CinA = CA;
 
-  Add18 AddA(.A(OPM), .B(OPB), .Cin(CinA), .S(ResA), .Cout(CoutA));
+  Add18 AddA(.A(OPM), .B(OPB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
 
   sg13_sdfbbp_1 dffX(.Q(CA), .D(CA), .SCD(CoutA), .SCE(Phase0), .RESET_B(1'b1), .SET_B(rst), .CLK(clk), .Q_N(_unused));
-  dffen_x18 RegA(.clk(clk), .rst(rst), .en(EnA), .D(ResA), .Q(A));  // No RESET, init random value gets flushed (but sim fails otherwise)
+  dffen_x18 RegA(.clk(clk), .rst(rst), .en(Phase0), .D(ResA), .Q(A));  // No RESET, init random value gets flushed (but sim fails otherwise)
   assign Message_out = A;
 
   // B path:
-  Register_InitY RegB(.clk(clk), .rst(rst), .en(EnB), .D(ResB), .Q(B));
+  Register_InitY RegB(.clk(clk), .rst(rst), .en(Phase1), .D(rst), .Q(B));   // /!\ loopback
 endmodule
 
 ////////////////////////////////////////////////////////////////////
