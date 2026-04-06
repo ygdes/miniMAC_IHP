@@ -168,7 +168,7 @@ module gPEAC18_scrambler_RB1(
   wire CX, newCX, CinX, CoutX;
   
   // X path:
-  assign OPM = {1'b0, Message_in});
+  assign OPM = {1'b0, Message_in};
   assign OPY = Y;
   assign Cin = CX;
   
