@@ -32,7 +32,7 @@ module Compare_modulus(
   sg13_nor3_1  L4a3_3(.Y( X), .A(t1),    .B(t2),    .C(t7));
 endmodule
 
-/* previous version, slightly larger & slower */
+/* previous version, slightly larger & slower
 module Compare_modulus_old(
     input wire [17:0] A,
     input wire En,
@@ -53,6 +53,8 @@ module Compare_modulus_old(
   // Last stage
   sg13_and3_1 L4a3_3(.X( X), .A(t1),    .B(t2),    .C(t7));
 endmodule
+*/
+
 
 /* adjust : std_ulogic_vector(17 downto 0) := "000000111110111110"; -- 4030 = 262144 - modulus; */
 module ConstAdjOrPass(
@@ -151,6 +153,35 @@ endmodule
 
 ////////////////////////////////////////////////////////////////////
 
+module gPEAC18_scrambler_RB1(
+  input  wire clk,
+  input  wire rst,
+  input  wire Phase0,
+  input  wire Phase1,
+  input  wire [16:0] Message_in, // C/D bit as Message_in[8]
+  output wire [17:0] X // 0 < data < modulus
+);
+  wire [17:0] Y;
+  wire [17:0] OPM;
+  wire [17:0] OPY2;
+  wire [17:0] ResX;
+  wire CX, newCX, CinX, CoutX;
+  
+  // X path:
+  assign OPM = {1'b0, Message_in});
+  assign OPY = Y;
+  assign Cin = CX;
+  
+  Add18 AddX(.A(OPM), .B(OPY), .Cin(CinX), .S(ResX), .Cout(CoutX));
+
+  Register_InitX RegX(.clk(clk), .rst(rst), .en(Phase0), .D(ResX), .Q(X));   // .D(Phase0) /!\
+  sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(CoutX), .SCE(Phase0), .RESET_B(rst), .CLK(clk));
+
+  Register_InitX RegY(.clk(clk), .rst(rst), .en(EnY), .D(Y), .Q(Y));   // .D(Y) /!\
+endmodule
+
+////////////////////////////////////////////////////////////////////
+
 module gPEAC18_scrambler(
   input  wire clk,
   input  wire rst,
@@ -187,6 +218,42 @@ module gPEAC18_scrambler(
   sg13_or2_1  OrY(.X(EnY), .A(Phase0), .B(newCY));               //  EnY = Phase0 or newCY
   Register_InitX RegY(.clk(clk), .rst(rst), .en(EnY), .D(ResY), .Q(Y));
   sg13_sdfrbpq_1 dffY(.Q(CY), .D(CY), .SCD(newCY), .SCE(phases), .RESET_B(rst), .CLK(clk));
+endmodule
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+module gPEAC18_descrambler_RB1(
+  input  wire clk,
+  input  wire rst,
+  input  wire Phase0,
+  input  wire Phase1,
+  input  wire [17:0] Scrambled_in, // 0 < data < modulus
+  output wire [17:0] Message_out   // C/D bit as Message_out[8], [17] is error
+);
+  wire [17:0] A;
+  wire [17:0] B;
+  wire [17:0] OPM;
+  wire [17:0] OPB2;
+  wire [17:0] ResA;
+  wire CA, CinA, CoutA;
+  /* verilator lint_off UNUSEDSIGNAL */
+  wire _unused;
+  /* verilator lint_on UNUSEDSIGNAL */
+
+  // A path:
+  assign OPM = Scrambled_in;
+  assign OPB2 = ~B;
+  assign CinA = CA;
+
+  Add18 AddA(.A(OPM), .B(OPB), .Cin(CinA), .S(ResA), .Cout(CoutA));
+
+  sg13_sdfbbp_1 dffX(.Q(CA), .D(CA), .SCD(CoutA), .SCE(Phase0), .RESET_B(1'b1), .SET_B(rst), .CLK(clk), .Q_N(_unused));
+  dffen_x18 RegA(.clk(clk), .rst(rst), .en(EnA), .D(ResA), .Q(A));  // No RESET, init random value gets flushed (but sim fails otherwise)
+  assign Message_out = A;
+
+  // B path:
+  Register_InitY RegB(.clk(clk), .rst(rst), .en(EnB), .D(ResB), .Q(B));
 endmodule
 
 ////////////////////////////////////////////////////////////////////
