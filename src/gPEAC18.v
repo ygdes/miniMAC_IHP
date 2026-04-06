@@ -253,7 +253,7 @@ module gPEAC18_descrambler_RB1(
   assign Message_out = A;
 
   // B path:
-  Register_InitY RegB(.clk(clk), .rst(rst), .en(Phase1), .D(rst), .Q(B));   // /!\ loopback
+  Register_InitY RegB(.clk(clk), .rst(rst), .en(Phase1), .D(B), .Q(B));   // /!\ loopback
 endmodule
 
 ////////////////////////////////////////////////////////////////////
