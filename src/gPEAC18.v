@@ -169,7 +169,7 @@ module gPEAC18_scrambler_RB1(
   
   // X path:
   assign OPM = {1'b0, Message_in};
-  assign OPY2 = Y;
+  assign OPY2 = {Y[16:0], 1'b0};
   assign CinX = CX;
   
   Add18 AddX(.A(OPM), .B(OPY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
@@ -243,7 +243,7 @@ module gPEAC18_descrambler_RB1(
 
   // A path:
   assign OPM = Scrambled_in;
-  assign OPB2 = ~B;
+  assign OPB2 = ~ {B[16:0], 1'b0};
   assign CinA = CA;
 
   Add18 AddA(.A(OPM), .B(OPB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
