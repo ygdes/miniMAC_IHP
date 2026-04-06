@@ -325,7 +325,7 @@ async def test_project(dut):
       await input_parameter(v, Encode, dut)  # Encode mode
       o = await output_parameter(dut)
       print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
-      assert o = x[1]
+      assert o == x[1]
     await ClockCycles(dut.clk, 6)
 
   if RB1_Decode == True:
@@ -336,7 +336,7 @@ async def test_project(dut):
       await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
       print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
-      #assert o = x[0]
+      #assert o == x[0]
     await ClockCycles(dut.clk, 6)
 
   ######################################################################
