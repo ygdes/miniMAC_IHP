@@ -271,11 +271,12 @@ async def test_project(dut):
   if enable_loopback == True:
     await reset_state(dut)  
     dut._log.info("Starting Loopback Mode")
-    for x in sequence:
-      await input_parameter(x, Encode+Decode, dut)
+    for x in Scrambler_vectors:
+      v = int(x,2)
+      await input_parameter(v, Encode+Decode, dut)
       t = await output_parameter(dut)
-      print(str(x) + " -> " + str(t))
-      assert t == x
+      print(str(v) + " -> " + str(t))
+      assert t == v
 
   #  Test Hammer in encode mode
   if enable_Hammer_encode == True:
