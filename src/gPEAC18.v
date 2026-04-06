@@ -177,7 +177,7 @@ module gPEAC18_scrambler_RB1(
   Register_InitX RegX(.clk(clk), .rst(rst), .en(Phase0), .D(ResX), .Q(X));   // .D(Phase0) /!\
   sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(CoutX), .SCE(Phase0), .RESET_B(rst), .CLK(clk));
 
-  Register_InitX RegY(.clk(clk), .rst(rst), .en(Phase1), .D(Y), .Q(Y));   // .D(Y) /!\
+  Register_InitY RegY(.clk(clk), .rst(rst), .en(Phase1), .D(Y), .Q(Y));   // .D(Y) /!\
 endmodule
 
 ////////////////////////////////////////////////////////////////////
