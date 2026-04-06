@@ -272,7 +272,7 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("Starting Loopback Mode")
     for x in Scrambler_vectors:
-      v = int(x,2)
+      v = (int(x,2)) % 131072
       await input_parameter(v, Encode+Decode, dut)
       t = await output_parameter(dut)
       print(str(v) + " -> " + str(t))
