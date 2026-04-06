@@ -202,7 +202,7 @@ module pipe_RB1(
       .clk(clk), .rst(rst), .Phase0(Din_OK), .Phase1(emPEAC_phase1),
       .Message_in(FirstWord[16:0]), .X(gPEACenc_result));
 
-  Encode_Hamming_empty Henc(
+  Encode_Hamming_early Henc(
       .clk(clk), .rst(rst), .HammEn(emPEAC_phase2),
       .HammIn(gPEACenc_result), .HammOut(HammerEnc_result) );
   
@@ -221,7 +221,7 @@ module pipe_RB1(
   sg13_dfrbpq_1 dff_dec1(.Q(dePEAC_phase1), .D(dePEAC_phase0), .RESET_B(rst), .CLK(clk));
   sg13_dfrbpq_1 dff_dec2(.Q(dePEAC_phase2), .D(dePEAC_phase1), .RESET_B(rst), .CLK(clk));
 
-  Decode_Hamming_empty Hdec(
+  Decode_Hamming_early Hdec(
       .clk(clk), .rst(rst), .HammEn(dePEAC_phase0),
       .HammIn(HammerDec_operand), .HammOut(HammerDec_result) );
 
