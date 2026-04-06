@@ -325,7 +325,7 @@ async def test_project(dut):
       await input_parameter(v, Encode, dut)  # Encode mode
       o = await output_parameter(dut)
       #print(" - found " + bin(o + (1 << 20)))
-      print(" - in: " + v + "   found: " + o + "   expected: " + x[1])
+      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
       #assert o = x[1]
     await ClockCycles(dut.clk, 6)
 
