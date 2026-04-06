@@ -4,9 +4,9 @@
 # Test the Hammer18 & gPEAC scrambler & descrambler in direct, encoding and decoding modes.
 
 enable_bypass = True
+enable_loopback = True
 enable_Hammer_encode = False
 enable_Hammer_decode = False
-enable_Hammer_loopback = False
 enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
 RB1_Encode = True
 RB1_Decode = True
@@ -267,7 +267,17 @@ async def test_project(dut):
       assert i == o
     await ClockCycles(dut.clk, 6)
 
-  #  Test Hammer in encode mode (mode=Encode)
+  # Test Hammer in mode=Loopback
+  if enable_loopback == True:
+    await reset_state(dut)  
+    dut._log.info("Starting Loopback Mode")
+    for x in sequence:
+      await input_parameter(x, Encode+Decode, dut)
+      t = await output_parameter(dut)
+      print(str(x) + " -> " + str(t))
+      assert t == x
+
+  #  Test Hammer in encode mode
   if enable_Hammer_encode == True:
     await reset_state(dut)  
     dut._log.info("Starting Hammer Encode Mode")
@@ -290,16 +300,6 @@ async def test_project(dut):
       print(str(i) + " : " + str(t))
       assert t == i
       i = i+1
-
-  # Test Hammer in mode=Loopback
-  if enable_Hammer_loopback == True:
-    await reset_state(dut)  
-    dut._log.info("Starting Loopback Mode")
-    for x in sequence:
-      await input_parameter(x, 0, dut)
-      t = await output_parameter(dut)
-      print(str(x) + " -> " + str(t))
-      assert t == x
 
   # mode=loopback but testing the comparator   /!\  Modulus Comparator is not exposed anymore   /!\
   if enable_compare == True:
@@ -336,7 +336,7 @@ async def test_project(dut):
       await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
       print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
-      #assert o == x[0]
+      assert o == x[0]
     await ClockCycles(dut.clk, 6)
 
   ######################################################################
