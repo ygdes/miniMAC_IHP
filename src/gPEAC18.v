@@ -182,6 +182,35 @@ endmodule
 
 ////////////////////////////////////////////////////////////////////
 
+module gPEAC18_scrambler_RB2(
+  input  wire clk,
+  input  wire rst,
+  input  wire Phase0,
+  input  wire Phase1,
+  input  wire [16:0] Message_in, // C/D bit as Message_in[8]
+  output wire [17:0] X // 0 < data < modulus
+);
+  wire [17:0] Y;
+  wire [17:0] OPM;
+  wire [17:0] OPY2;
+  wire [17:0] ResX;
+  wire CX, CinX, CoutX;
+  
+  // X path:
+  assign OPM = {1'b0, Message_in};
+  assign OPY2 = {Y[16:0], 1'b0};
+  assign CinX = CX;
+  
+  Add18 AddX(.A(OPM), .B(OPY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
+
+  Register_InitX RegX(.clk(clk), .rst(rst), .en(Phase0), .D(ResX), .Q(X));   // .D(Phase0) /!\
+  sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(CoutX), .SCE(Phase0), .RESET_B(rst), .CLK(clk));
+
+  Register_InitY RegY(.clk(clk), .rst(rst), .en(Phase1), .D(Y), .Q(Y));   // .D(Y) /!\
+endmodule
+
+////////////////////////////////////////////////////////////////////
+
 module gPEAC18_scrambler(
   input  wire clk,
   input  wire rst,
@@ -224,6 +253,41 @@ endmodule
 ////////////////////////////////////////////////////////////////////
 
 module gPEAC18_descrambler_RB1(
+  input  wire clk,
+  input  wire rst,
+  input  wire Phase0,
+  input  wire Phase1,
+  input  wire [17:0] Scrambled_in, // 0 < data < modulus
+  output wire [17:0] Message_out   // C/D bit as Message_out[8], [17] is error
+);
+  wire [17:0] A;
+  wire [17:0] B;
+  wire [17:0] OPM;
+  wire [17:0] OPB2;
+  wire [17:0] ResA;
+  wire CA, CinA, CoutA;
+  /* verilator lint_off UNUSEDSIGNAL */
+  wire _unused;
+  /* verilator lint_on UNUSEDSIGNAL */
+
+  // A path:
+  assign OPM = Scrambled_in;
+  assign OPB2 = ~ {B[16:0], 1'b0};
+  assign CinA = CA;
+
+  Add18 AddA(.A(OPM), .B(OPB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
+
+  sg13_sdfbbp_1 dffX(.Q(CA), .D(CA), .SCD(CoutA), .SCE(Phase0), .RESET_B(1'b1), .SET_B(rst), .CLK(clk), .Q_N(_unused));
+  dffen_x18 RegA(.clk(clk), .rst(rst), .en(Phase0), .D(ResA), .Q(A));  // No RESET, init random value gets flushed (but sim fails otherwise)
+  assign Message_out = A;
+
+  // B path:
+  Register_InitY RegB(.clk(clk), .rst(rst), .en(Phase1), .D(B), .Q(B));   // /!\ loopback
+endmodule
+
+////////////////////////////////////////////////////////////////////
+
+module gPEAC18_descrambler_RB2(
   input  wire clk,
   input  wire rst,
   input  wire Phase0,
