@@ -260,7 +260,7 @@ module pipe_RB2(
   Encode_Hamming_empty Henc(
       .clk(clk), .rst(rst), .HammEn(emPEAC_OK),
       .HammIn(gPEACenc_result), .HammOut(HammerEnc_result) );
-  
+
   mux2_x18 selEnc( .sel(Encode), .if0(FirstWord), .if1(HammerEnc_result), .res(tmpSel) );
   sg13_mux2_2 selEncEn(.S(Encode), .A0(Din_OK), .A1(emPEAC_OK), .X(Dout_Enc));
 
@@ -284,5 +284,5 @@ module pipe_RB2(
       .Scrambled_in(HammerDec_result), .Message_out(gPEACdec_result));
 
   mux2_x18 selDec18( .sel(Decode), .if0(tmpSel), .if1(gPEACdec_result), .res(LastWord) );
-    sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
+  sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
 endmodule
