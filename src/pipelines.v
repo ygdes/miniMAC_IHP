@@ -251,10 +251,10 @@ module pipe_RB2(
   wire emPEAC_OK Dout_Enc;
 
   // pipeline : Din_OK---[]---emPEAC_OK
-  //              \__emPEAC       \__output
+  //              \__emPEAC       \__output ready
   sg13_dfrbpq_1 dff_enc(.Q(emPEAC_OK), .D(Din_OK), .RESET_B(rst), .CLK(clk));
   gPEAC18_scrambler_RB2 emPEAC(
-      .clk(clk), .rst(rst), .Phase0(Din_OK),
+      .clk(clk), .rst(rst), .en(Din_OK),
       .Message_in(FirstWord[16:0]), .X(gPEACenc_result));
 
   Encode_Hamming_empty Henc(
@@ -271,18 +271,18 @@ module pipe_RB2(
   mux2_x18 selOpDec( .sel(DecOpSel), .if0(FirstWord), .if1(HammerEnc_result), .res(HammerDec_operand) );
 
   // pipeline : Din_OK/emPEAC_OK=>dePEAC_en---[]---dePEAC_OK
-  //                                      \__phase0            \__phase1
+  //                                  \__dePEAC           \__outout ready
   sg13_mux2_2 sel_src(.S(Decode), .A0(Din_OK), .A1(emPEAC_OK), .X(dePEAC_en));
   sg13_dfrbpq_1 dff_dec(.Q(dePEAC_OK), .D(dePEAC_en), .RESET_B(rst), .CLK(clk));
 
   Decode_Hamming_empty Hdec(
       .clk(clk), .rst(rst), .HammEn(dePEAC_en),
-      .HammIn(HammerDec_operand), .HammOut(HammerDec_result) );
+      .HammIn(HammerDec_operand), .HammOut(HammerDec_result));
 
   gPEAC18_descrambler_RB2 dePEAC(
-      .clk(clk), .rst(rst), .en(dePEAC_OK),
+      .clk(clk), .rst(rst), .en(dePEAC_en),
       .Scrambled_in(HammerDec_result), .Message_out(gPEACdec_result));
 
   mux2_x18 selDec18( .sel(Decode), .if0(tmpSel), .if1(gPEACdec_result), .res(LastWord) );
-  sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_phase2), .X(Dout_OK));
+    sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
 endmodule
