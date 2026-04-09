@@ -4,7 +4,7 @@
 # Test the Hammer18 & gPEAC scrambler & descrambler in direct, encoding and decoding modes.
 
 enable_bypass = True
-enable_loopback = True
+enable_loopback = False
 enable_Hammer_encode = False
 enable_Hammer_decode = False
 enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
@@ -12,6 +12,8 @@ RB1_Encode = False
 RB1_Decode = False
 RB2_Encode = False
 RB2_Decode = False
+RB3_Encode = False
+RB3_Decode = False
 Scrambling_gPEAC_direct = False
 Scrambling_loopback = False
 
@@ -464,6 +466,30 @@ async def test_project(dut):
     await reset_state(dut)
     dut._log.info("RB2 Descrambling Mode")
     for x in RB2_vectors:
+      v = x[1]
+      await input_parameter(v, Decode, dut)  # Decode mode
+      o = await output_parameter(dut)
+      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
+      assert o == x[0]
+    await ClockCycles(dut.clk, 6)
+
+  ###
+
+  if RB3_Encode == True:
+    await reset_state(dut)
+    dut._log.info("RB3 Scrambling Mode")
+    for x in RB3_vectors:
+      v = x[0]
+      await input_parameter(v, Encode, dut)  # Encode mode
+      o = await output_parameter(dut)
+      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
+      assert o == x[1]
+    await ClockCycles(dut.clk, 6)
+
+  if RB3_Decode == True:
+    await reset_state(dut)
+    dut._log.info("RB3 Descrambling Mode")
+    for x in RB3_vectors:
       v = x[1]
       await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
