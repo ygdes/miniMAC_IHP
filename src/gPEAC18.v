@@ -199,15 +199,12 @@ module gPEAC18_scrambler_RB2(
   assign OPM = {1'b0, Message_in};
   assign OPY2 = {Y[16:0], 1'b0};   // Y×2 during early tests
   assign CinX = CX;
-  
+
   Add18 AddX(.A(OPM), .B(OPY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
-
-  Add18 AddAdj(.A(ResX), .B(18'd4030), .Cin(1'b0), .S(ResX2), .Cout(CoutX2));
-
+  Add18 AddAdj(.A(ResX), .B(18'd4030), .Cin(1'b0), .S(ResX2), .Cout(CoutX2));  // ADJUST
   sg13_or2_2  CombCoutX(.A(CoutX), .B(CoutX2), .X(newCX));
   sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(newCX), .SCE(en), .RESET_B(rst), .CLK(clk));
   mux2_x18 selRes( .sel(newCX), .if0(ResX), .if1(ResX2), .res(XM));
-
   Register_InitX RegX(.clk(clk), .rst(rst), .en(en), .D(XM), .Q(X));
 
   Register_InitY RegY(.clk(clk), .rst(rst), .en(en), .D(Y), .Q(Y));   // .D(Y) /!\
