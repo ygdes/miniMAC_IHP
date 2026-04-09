@@ -248,7 +248,7 @@ module pipe_RB2(
 
 // Encoding
   wire [17:0] HammerEnc_result, gPEACenc_result, tmpSel;
-  wire emPEAC_OK Dout_Enc;
+  wire emPEAC_OK, Dout_Enc;
 
   // pipeline : Din_OK---[]---emPEAC_OK
   //              \__emPEAC       \__output ready
