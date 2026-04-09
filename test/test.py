@@ -4,7 +4,7 @@
 # Test the Hammer18 & gPEAC scrambler & descrambler in direct, encoding and decoding modes.
 
 enable_bypass = True
-enable_loopback = True
+enable_loopback = False
 enable_Hammer_encode = False
 enable_Hammer_decode = False
 enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
