@@ -18,7 +18,7 @@ module Compare_modulus(
   wire t1, t2, t3, t4, t5, t6, t7, _unused;
   assign _unused = A[0]; // The LSB has no effect.
   // first layer
-  sg13_nand4_1 L1a3_1(.Y(t1), .A(A[17]), .B(A[16]), .C(A[15]));
+  sg13_nand3_1 L1a3_1(.Y(t1), .A(A[17]), .B(A[16]), .C(A[15]));
   sg13_nand3_1 L1a3_2(.Y(t2), .A(A[14]), .B(A[13]), .C(A[12]));
   sg13_or3_1   L1o3_1(.X(t3), .A(A[11]), .B(A[10]), .C(A[ 9]));
   sg13_or3_1   L1o3_2(.X(t4), .A(A[ 3]), .B(A[ 2]), .C(A[ 1]));
