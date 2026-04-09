@@ -10,6 +10,8 @@ enable_Hammer_decode = False
 enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
 RB1_Encode = False
 RB1_Decode = False
+RB2_Encode = False
+RB2_Decode = False
 Scrambling_gPEAC_direct = False
 Scrambling_loopback = False
 
@@ -240,6 +242,111 @@ RB1_vectors=[
 [  52659,   14477]
 ]
 
+RB2_vectors=[
+[   1234,  225196],
+[  38650,    4498],
+[  76066,   41915],
+[ 113482,   79331],
+[  19826,  243789],
+[  57242,   23090],
+[  94658,   60507],
+[   1002,  224965],
+[  38418,    4266],
+[  75834,   41683],
+[ 113250,   79099],
+[  19594,  243557],
+[  57010,   22858],
+[  94426,   60275],
+[    770,  224733],
+[  38186,    4034],
+[  75602,   41451],
+[ 113018,   78867],
+[  19362,  243325],
+[  56778,   22626],
+[  94194,   60043],
+[    538,  224501],
+[  37954,    3802],
+[  75370,   41219],
+[ 112786,   78635],
+[  19130,  243093],
+[  56546,   22394],
+[  93962,   59811],
+[    306,  224269],
+[  37722,    3570],
+[  75138,   40987],
+[ 112554,   78403],
+[  18898,  242861],
+[  56314,   22162],
+[  93730,   59579],
+[     74,  224037],
+[  37490,    3338],
+[  74906,   40755],
+[ 112322,   78171],
+[  18666,  242629],
+[  56082,   21930],
+[  93498,   59347],
+[ 130914,   96763],
+[  37258,    3107],
+[  74674,   40523],
+[ 112090,   77939],
+[  18434,  242397],
+[  55850,   21698],
+[  93266,   59115],
+[ 130682,   96531],
+[  37026,    2875],
+[  74442,   40291],
+[ 111858,   77707],
+[  18202,  242165],
+[  55618,   21466],
+[  93034,   58883],
+[ 130450,   96299],
+[  36794,    2643],
+[  74210,   40059],
+[ 111626,   77475],
+[  17970,  241933],
+[  55386,   21234],
+[  92802,   58651],
+[ 130218,   96067],
+[  36562,    2411],
+[  73978,   39827],
+[ 111394,   77243],
+[  17738,  241701],
+[  55154,   21002],
+[  92570,   58419],
+[ 129986,   95835],
+[  36330,    2179],
+[  73746,   39595],
+[ 111162,   77011],
+[  17506,  241469],
+[  54922,   20770],
+[  92338,   58187],
+[ 129754,   95603],
+[  36098,    1947],
+[  73514,   39363],
+[ 110930,   76779],
+[  17274,  241237],
+[  54690,   20538],
+[  92106,   57955],
+[ 129522,   95371],
+[  35866,    1715],
+[  73282,   39131],
+[ 110698,   76547],
+[  17042,  241005],
+[  54458,   20306],
+[  91874,   57723],
+[ 129290,   95139],
+[  35634,    1483],
+[  73050,   38899],
+[ 110466,   76315],
+[  16810,  240773],
+[  54226,   20074],
+[  91642,   57491],
+[ 129058,   94907],
+[  35402,    1251]
+]
+
+
+
 @cocotb.test()
 async def test_project(dut):
   dut._log.info("Start")
@@ -333,6 +440,30 @@ async def test_project(dut):
     await reset_state(dut)  
     dut._log.info("RB1 Descrambling Mode")
     for x in RB1_vectors:
+      v = x[1]
+      await input_parameter(v, Decode, dut)  # Decode mode
+      o = await output_parameter(dut)
+      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
+      assert o == x[0]
+    await ClockCycles(dut.clk, 6)
+
+  ###
+
+  if RB2_Encode == True:
+    await reset_state(dut)  
+    dut._log.info("RB2 Scrambling Mode")
+    for x in RB2_vectors:
+      v = x[0]
+      await input_parameter(v, Encode, dut)  # Encode mode
+      o = await output_parameter(dut)
+      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
+      assert o == x[1]
+    await ClockCycles(dut.clk, 6)
+
+  if RB2_Decode == True:
+    await reset_state(dut)  
+    dut._log.info("RB2 Descrambling Mode")
+    for x in RB2_vectors:
       v = x[1]
       await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
