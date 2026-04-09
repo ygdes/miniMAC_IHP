@@ -257,7 +257,7 @@ module pipe_RB2(
       .clk(clk), .rst(rst), .en(Din_OK),
       .Message_in(FirstWord[16:0]), .X(gPEACenc_result));
 
-  Encode_Hamming_empty Henc(
+  Encode_Hamming_early Henc(
       .clk(clk), .rst(rst), .HammEn(emPEAC_OK),
       .HammIn(gPEACenc_result), .HammOut(HammerEnc_result) );
 
@@ -275,7 +275,7 @@ module pipe_RB2(
   sg13_mux2_2 sel_src(.S(Decode), .A0(Din_OK), .A1(emPEAC_OK), .X(dePEAC_en));
   sg13_dfrbpq_1 dff_dec(.Q(dePEAC_OK), .D(dePEAC_en), .RESET_B(rst), .CLK(clk));
 
-  Decode_Hamming_empty Hdec(
+  Decode_Hamming_early Hdec(
       .clk(clk), .rst(rst), .HammEn(dePEAC_en),
       .HammIn(HammerDec_operand), .HammOut(HammerDec_result));
 
