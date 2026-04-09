@@ -11,7 +11,7 @@ enable_compare  = False # just a debug that worked for a while, no use for final
 RB1_Encode = False
 RB1_Decode = False
 RB2_Encode = True
-RB2_Decode = False
+RB2_Decode = True
 Scrambling_gPEAC_direct = False
 Scrambling_loopback = False
 
