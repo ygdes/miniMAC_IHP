@@ -381,3 +381,74 @@ module gPEAC18_descrambler_RB2(
   // "B" path:
   Register_InitY RegB(.clk(clk), .rst(rst), .en(en), .D(B), .Q(B));   // /!\ loopback
 endmodule
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+
+module gPEAC18_scrambler_RB3(
+  input  wire clk,
+  input  wire rst,
+  input  wire en,
+  input  wire [16:0] Message_in, // C/D bit as Message_in[8]
+  output wire [17:0] X // 0 < data < modulus
+);
+  wire [17:0] Y;
+  wire [17:0] OPM;
+  wire [17:0] OPY2;
+  wire [17:0] ResX, ResX2, XM;
+  wire CX, CinX, CoutX, CoutX2, newCX;
+
+  // "X" path:
+  assign OPM = {1'b0, Message_in};
+  assign OPY2 = {Y[16:0], 1'b0};   // Y×2 during early tests
+  assign CinX = CX;
+
+  Add18 AddX(.A(OPM), .B(OPY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  Add18 AddAdj(.A(ResX), .B(18'd4030), .Cin(1'b0), .S(ResX2), .Cout(CoutX2));  // ADJUST
+  sg13_or2_2  CombCoutX(.A(CoutX), .B(CoutX2), .X(newCX));
+  sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(newCX), .SCE(en), .RESET_B(rst), .CLK(clk));
+  mux2_x18 selRes( .sel(newCX), .if0(ResX), .if1(ResX2), .res(XM));
+  Register_InitX RegX(.clk(clk), .rst(rst), .en(en), .D(XM), .Q(X));
+
+  // "Y" path:
+  Register_InitY RegY(.clk(clk), .rst(rst), .en(en), .D(Y), .Q(Y));   // .D(Y) /!\
+endmodule
+
+////////////////////////////////////////////////////////////////////
+
+module gPEAC18_descrambler_RB3(
+  input  wire clk,
+  input  wire rst,
+  input  wire en,
+  input  wire [17:0] Scrambled_in, // 0 < data < modulus
+  output wire [17:0] Message_out   // C/D bit as Message_out[8], [17] is error
+);
+  wire [17:0] A;
+  wire [17:0] B;
+  wire [17:0] OPM;
+  wire [17:0] OPB2;
+  wire [17:0] ResA, ResA2, AM;
+  wire CA, CinA, CoutA,
+        error_Modulus, error;
+  Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
+
+  /* verilator lint_off UNUSEDSIGNAL */
+  wire _unused, _unused2;
+  /* verilator lint_on UNUSEDSIGNAL */
+
+  // "A" path:
+  assign OPM = Scrambled_in;
+  assign OPB2 = ~ {B[16:0], 1'b0};  // Y×2 during early tests
+  assign CinA = CA;
+
+  Add18 AddA(.A(OPM), .B(OPB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
+  Add18 AddAM(.A(18'd258114), .B(ResA), .Cin(1'b0), .S(ResA2), .Cout(_unused2));
+  mux2_x18 selRes( .sel(CoutA), .if0(ResA2), .if1(ResA), .res(AM));
+  sg13_or2_1 CombErr(.A(error_Modulus), .B(AM[17]), .X(error));         // combine the 2 errors
+  dffen_x18 RegA(.clk(clk), .rst(rst), .en(en), .D({error, AM[16:0]}), .Q(A));  // No RESET, the initial random value gets flushed (but sim fails otherwise)
+  sg13_sdfbbp_1 dffCA(.Q(CA), .D(CA), .SCD(CoutA), .SCE(en), .RESET_B(1'b1), .SET_B(rst), .CLK(clk), .Q_N(_unused));
+  assign Message_out = A;  // available during the next cycle
+
+  // "B" path:
+  Register_InitY RegB(.clk(clk), .rst(rst), .en(en), .D(B), .Q(B));   // /!\ loopback
+endmodule
