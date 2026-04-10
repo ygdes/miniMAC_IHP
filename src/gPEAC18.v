@@ -412,7 +412,7 @@ module gPEAC18_scrambler_RB3(
   // "Y" path:
   assign OpX  = X;
   assign OpY  = Y;
-  assign CinX = CY;
+  assign CinY = CY;
   Add18 AddY(.A(OpX), .B(OpY), .Cin(CinY), .S(ResY), .Cout(CoutY));
   Add18 AddYAdj(.A(ResY), .B(18'd4030), .Cin(1'b0), .S(ResY2), .Cout(CoutY2));  // ADJUST
   sg13_or2_2  CombCoutY(.A(CoutY), .B(CoutY2), .X(newCY));
