@@ -442,7 +442,7 @@ module gPEAC18_descrambler_RB3(
   
   // "A" path:
   assign OpM = Scrambled_in;
-  assign OpB2 = ~ {B[16:0], 1'b0};  // Y×2 during early tests
+  assign OpB2 = ~B;
   assign CinA = CA;
 
   Add18 AddA(.A(OpM), .B(OpB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
