@@ -340,3 +340,60 @@ module pipe_RB3(
   mux2_x18 selDec18( .sel(Decode), .if0(tmpSel), .if1(gPEACdec_result), .res(LastWord) );
   sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
 endmodule
+
+
+module pipe_full(
+  input wire clk,
+  input wire rst,
+  input wire Encode,
+  input wire Decode,
+  input wire Din_OK,
+  input wire [17:0] FirstWord,
+  output wire Dout_OK,
+  output wire [17:0] LastWord 
+);
+
+// Encoding
+  wire [17:0] HammerEnc_result, gPEACenc_result, tmpSel;
+  wire encOK, decOK, emPEAC_OK, Dout_Enc;
+
+  //         encode____
+  //                   \
+  // pipeline : Din_OK--D----encOK----[]---emPEAC_OK
+  //                              \__emPEAC       \__output ready
+  sg13_and2_2 AndEncOK(.A(Din_OK), .B(Encode), .X(encOK));
+  sg13_dfrbpq_1 dff_enc(.Q(emPEAC_OK), .D(encOK), .RESET_B(rst), .CLK(clk));
+  gPEAC18_scrambler_RB3 emPEAC(
+      .clk(clk), .rst(rst), .en(Din_OK),
+      .Message_in(FirstWord[16:0]), .X(gPEACenc_result));
+
+  Encode_Hamming_empty Henc(
+      .clk(clk), .rst(rst), .HammEn(emPEAC_OK),
+      .HammIn(gPEACenc_result), .HammOut(HammerEnc_result) );
+
+  mux2_x18 selEnc( .sel(Encode), .if0(FirstWord), .if1(HammerEnc_result), .res(tmpSel) );
+  sg13_mux2_2 selEncEn(.S(Encode), .A0(Din_OK), .A1(emPEAC_OK), .X(Dout_Enc));
+
+// Decoding
+  wire [17:0] HammerDec_result, HammerDec_operand, gPEACdec_result;
+  wire DecOpSel, DecSel, dePEAC_en, dePEAC_OK;
+  sg13_and2_2 AndSel(.A(Encode), .B(Decode), .X(DecOpSel));  // FO19... but slow. how can I tell the synth? ===> SDC
+  mux2_x18 selOpDec( .sel(DecOpSel), .if0(FirstWord), .if1(HammerEnc_result), .res(HammerDec_operand) );
+
+  // pipeline : Din_OK:emPEAC_OK & Decode=>dePEAC_en---[]---dePEAC_OK
+  //                                            \__dePEAC           \__outout ready
+  sg13_mux2_2 sel_src(.S(Encode), .A0(Din_OK), .A1(emPEAC_OK), .X(DecSel));
+  sg13_and2_2 AndDecOK(.A(Decode), .B(DecSel), .X(dePEAC_en));
+  sg13_dfrbpq_1 dff_dec(.Q(dePEAC_OK), .D(dePEAC_en), .RESET_B(rst), .CLK(clk));
+
+  Decode_Hamming_empty Hdec(
+      .clk(clk), .rst(rst), .HammEn(dePEAC_en),
+      .HammIn(HammerDec_operand), .HammOut(HammerDec_result));
+
+  gPEAC18_descrambler_RB3 dePEAC(
+      .clk(clk), .rst(rst), .en(dePEAC_en),
+      .Scrambled_in(HammerDec_result), .Message_out(gPEACdec_result));
+
+  mux2_x18 selDec18( .sel(Decode), .if0(tmpSel), .if1(gPEACdec_result), .res(LastWord) );
+  sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
+endmodule
