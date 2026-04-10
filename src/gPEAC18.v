@@ -431,11 +431,12 @@ module gPEAC18_descrambler_RB3(
   output wire [17:0] Message_out   // C/D bit as Message_out[8], [17] is error
 );
   wire [17:0] A, B, T;
-  wire [17:0] OpM, OpB2;
+  wire [17:0] OpM, OpB, OpT, OpB2;
   wire [17:0] ResA, ResA2, AM;
   wire [17:0] ResB, ResB2, BM;
   wire CA, CinA, CoutA;
   wire CB, CinB, CoutB, CoutB2, newCB;
+  wire error_Modulus, error;
   /* verilator lint_off UNUSEDSIGNAL */
   wire _unused, _unused2;
   /* verilator lint_on UNUSEDSIGNAL */
@@ -449,7 +450,6 @@ module gPEAC18_descrambler_RB3(
   Add18 AddAM(.A(18'd258114), .B(ResA), .Cin(1'b0), .S(ResA2), .Cout(_unused2));
   mux2_x18 selRes( .sel(CoutA), .if0(ResA2), .if1(ResA), .res(AM));
 
-  wire error_Modulus, error;
   Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
   sg13_or2_1 CombErr(.A(error_Modulus), .B(AM[17]), .X(error));         // combine the 2 errors
 
