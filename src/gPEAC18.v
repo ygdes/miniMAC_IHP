@@ -413,11 +413,11 @@ module gPEAC18_scrambler_RB3(
   assign OpX  = X;
   assign OpY  = Y;
   assign CinX = CY;
-  Add18 AddX(.A(OpX), .B(OpY), .Cin(CinY), .S(ResY), .Cout(CoutY));
-  Add18 AddXAdj(.A(ResY), .B(18'd4030), .Cin(1'b0), .S(ResY2), .Cout(CoutY2));  // ADJUST
+  Add18 AddY(.A(OpX), .B(OpY), .Cin(CinY), .S(ResY), .Cout(CoutY));
+  Add18 AddYAdj(.A(ResY), .B(18'd4030), .Cin(1'b0), .S(ResY2), .Cout(CoutY2));  // ADJUST
   sg13_or2_2  CombCoutY(.A(CoutY), .B(CoutY2), .X(newCY));
   sg13_sdfrbpq_1 dffCY(.Q(CY), .D(CY), .SCD(newCY), .SCE(en), .RESET_B(rst), .CLK(clk));
-  mux2_x18 selRes( .sel(newCY), .if0(ResY), .if1(ResY2), .res(YM));
+  mux2_x18 selResY( .sel(newCY), .if0(ResY), .if1(ResY2), .res(YM));
   Register_InitY RegY(.clk(clk), .rst(rst), .en(en), .D(YM), .Q(Y));
 endmodule
 
