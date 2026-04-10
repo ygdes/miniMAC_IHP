@@ -12,9 +12,10 @@ RB1_Encode = False
 RB1_Decode = False
 RB2_Encode = False
 RB2_Decode = False
-RB3_Encode = True
-RB3_Decode = True
-Scrambling_gPEAC_direct = False
+RB3_Encode = False
+RB3_Decode = False
+Hammer_gPEAC_Scrambling = True
+
 Scrambling_loopback = False
 
 import cocotb
@@ -466,10 +467,10 @@ async def test_project(dut):
   
   # Test bypass mode (mode=0)
   if enable_bypass == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("Starting bypass Mode")
-    for x in vectors:
-      i = int(x[0],2)
+    for x in RB3_vectors:
+      i = x[1]
       #print("testing      " + x[0]);
       await input_parameter(i, 0, dut)  # Encode = Decode = 0 => direct mode
       o = await output_parameter(dut)
@@ -477,20 +478,22 @@ async def test_project(dut):
       assert i == o
     await ClockCycles(dut.clk, 6)
 
-  # Test Hammer in mode=Loopback
+  # Test in mode=Loopback
   if enable_loopback == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("Starting Loopback Mode")
-    for x in Scrambler_vectors:
-      v = (int(x,2)) % 131072
+    for x in RB3_vectors:
+      v = x[1] % 131072
       await input_parameter(v, Encode+Decode, dut)
       t = await output_parameter(dut)
       print(str(v) + " -> " + str(t))
       assert t == v
 
+  #########################"
+
   #  Test Hammer in encode mode
   if enable_Hammer_encode == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("Starting Hammer Encode Mode")
     i = 10
     for x in Hammer18_sequence:
@@ -502,7 +505,7 @@ async def test_project(dut):
 
   # Test Hammer in mode=Decode
   if enable_Hammer_decode == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("Starting Hammer Decode Mode")
     i = 10
     for x in Hammer18_sequence:
@@ -529,7 +532,7 @@ async def test_project(dut):
   # Testing intermediary versions of gPEAC
 
   if RB1_Encode == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("RB1 Scrambling Mode")
     for x in RB1_vectors:
       v = x[0]
@@ -540,7 +543,7 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 6)
 
   if RB1_Decode == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("RB1 Descrambling Mode")
     for x in RB1_vectors:
       v = x[1]
@@ -601,20 +604,20 @@ async def test_project(dut):
   ######################################################################
   # The following code is used to test the whole Hammer+gPEAC circuit
 
-  if Scrambling_gPEAC_direct == True:
-    await reset_state(dut)  
+  if Hammer_gPEAC_Scrambling == True:
+    await reset_state(dut)
     dut._log.info("Scrambling Mode")
-    for x in gPEAC_vectors:
-      v = int(x,2)
-      print("expected " + bin(v + (1 << 20)))
-      await input_parameter(0, Encode, dut)  # Encode mode
+    for x in RB3_vectors:
+      v = x[1]
+      await input_parameter(v, Encode, dut)  # Encode mode
       o = await output_parameter(dut)
-      print(" - found " + bin(o + (1 << 20)))
+      print("[" + str(v] + ", "+str(o)+"],")
       #assert v == o
     await ClockCycles(dut.clk, 6)
 
+  # very old code:
   if Scrambling_loopback == True:
-    await reset_state(dut)  
+    await reset_state(dut)
     dut._log.info("Scrambling/descrambling Mode")
     for x in range(0, 20):
       #v = int(x,2)
