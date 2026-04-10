@@ -611,7 +611,7 @@ async def test_project(dut):
       v = x[1]
       await input_parameter(v, Encode, dut)  # Encode mode
       o = await output_parameter(dut)
-      print("[" + str(v] + ", "+str(o)+"],")
+      print("[" + str(v) + ", "+str(o)+"],")
       #assert v == o
     await ClockCycles(dut.clk, 6)
 
