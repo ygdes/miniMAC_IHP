@@ -15,6 +15,7 @@ RB2_Decode = False
 RB3_Encode = False
 RB3_Decode = False
 Hammer_gPEAC_Scrambling = True
+Hammer_gPEAC_Descrambling = True
 
 Scrambling_loopback = False
 
@@ -589,7 +590,7 @@ async def test_project(dut):
       v = x[1] % 131072
       await input_parameter(v, Encode+Decode, dut)
       t = await output_parameter(dut)
-      print(str(v) + " -> " + str(t))
+      #print(str(v) + " -> " + str(t))
       assert t == v
 
   #########################"
@@ -718,6 +719,19 @@ async def test_project(dut):
       assert x[1] == o
     await ClockCycles(dut.clk, 6)
 
+  if Hammer_gPEAC_Descrambling == True:
+    await reset_state(dut)
+    dut._log.info("Descrambling Mode")
+    for x in FullVectors:
+      v = x[1]
+      await input_parameter(v, Encode, dut)  # Encode mode
+      o = await output_parameter(dut)
+      #print("[" + str(v) + ", "+str(o)+"],")
+      assert x[0] == o
+    await ClockCycles(dut.clk, 6)
+
+
+  ######################################################################
   # very old code:
   if Scrambling_loopback == True:
     await reset_state(dut)
