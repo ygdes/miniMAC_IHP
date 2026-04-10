@@ -666,7 +666,7 @@ async def test_project(dut):
       v = x[0]
       await input_parameter(v, Encode, dut)  # Encode mode
       o = await output_parameter(dut)
-      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
+      print(str(x[1]-o) + " - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
       assert o == x[1]
     await ClockCycles(dut.clk, 6)
 
@@ -677,7 +677,7 @@ async def test_project(dut):
       v = x[1]
       await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
-      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
+      print(str(x[0]-o) + " - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
       assert o == x[0]
     await ClockCycles(dut.clk, 6)
 
@@ -690,7 +690,7 @@ async def test_project(dut):
       v = x[0]
       await input_parameter(v, Encode, dut)  # Encode mode
       o = await output_parameter(dut)
-      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
+      print(str(x[1]-o) + " - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[1]))
       assert o == x[1]
     await ClockCycles(dut.clk, 6)
 
@@ -701,7 +701,7 @@ async def test_project(dut):
       v = x[1]
       await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
-      print(" - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
+      print(str(x[0]-o) + " - in: " + str(v) + "   found: " + str(o) + "   expected: " + str(x[0]))
       assert o == x[0]
     await ClockCycles(dut.clk, 6)
 
