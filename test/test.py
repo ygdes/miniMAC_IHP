@@ -12,8 +12,8 @@ RB1_Encode = False
 RB1_Decode = False
 RB2_Encode = False
 RB2_Decode = False
-RB3_Encode = False
-RB3_Decode = False
+RB3_Encode = True
+RB3_Decode = True
 Hammer_gPEAC_Scrambling = True
 
 Scrambling_loopback = False
