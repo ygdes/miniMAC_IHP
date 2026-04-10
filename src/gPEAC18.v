@@ -130,7 +130,7 @@ module Register_InitX(
   output wire [17:0] Q
 );
   wire [17:0] S, R;
-  // Init_X = "1011 0110 1110 110 111"
+  //  INIT_X = "1011 0110 1110 110 111" = 187319
   assign S = { rst,1'b1,rst, rst,   1'b1,rst,rst,1'b1,  rst, rst, rst, 1'b1,  rst, rst, 1'b1,  rst, rst, rst };
   assign R = { 1'b1,rst,1'b1,1'b1,  rst,1'b1,1'b1,rst,  1'b1,1'b1,1'b1,rst,   1'b1,1'b1,rst,   1'b1,1'b1,1'b1};
   dffen_rs_x18 register(.clk(clk), .rst(R), .set(S), .en(en), .D(D), .Q(Q));
@@ -144,7 +144,7 @@ module Register_InitY(
   output wire [17:0] Q
 );
   wire [17:0] S, R;
-  // Init_Y = "01 101  101 0 101 101 101"
+  // Init_Y = "01 101 101 0 101 101 101" = 111981
   assign S = { 1'b1,rst,   rst, 1'b1,rst,   rst, 1'b1,rst,    1'b1,  rst, 1'b1,rst,   rst, 1'b1,rst,   rst, 1'b1,rst  };
   assign R = { rst, 1'b1,  1'b1,rst, 1'b1,  1'b1,rst, 1'b1,   rst,   1'b1,rst, 1'b1,  1'b1,rst, 1'b1,  1'b1,rst, 1'b1 };
   dffen_rs_x18 register(.clk(clk), .rst(R), .set(S), .en(en), .D(D), .Q(Q));
@@ -392,26 +392,33 @@ module gPEAC18_scrambler_RB3(
   input  wire [16:0] Message_in, // C/D bit as Message_in[8]
   output wire [17:0] X // 0 < data < modulus
 );
-  wire [17:0] Y;
-  wire [17:0] OPM;
-  wire [17:0] OPY2;
+  wire [17:0] Y, OpM, OpX, OpY, OpY2;
   wire [17:0] ResX, ResX2, XM;
+  wire [17:0] ResY, ResY2, YM;
   wire CX, CinX, CoutX, CoutX2, newCX;
+  wire CY, CinY, CoutY, CoutY2, newCY;
 
   // "X" path:
-  assign OPM = {1'b0, Message_in};
-  assign OPY2 = {Y[16:0], 1'b0};   // Y×2 during early tests
+  assign OpM  = {1'b0, Message_in};
+  assign OpY2 = Y;
   assign CinX = CX;
-
-  Add18 AddX(.A(OPM), .B(OPY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
-  Add18 AddAdj(.A(ResX), .B(18'd4030), .Cin(1'b0), .S(ResX2), .Cout(CoutX2));  // ADJUST
+  Add18 AddX(.A(OpM), .B(OpY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  Add18 AddXAdj(.A(ResX), .B(18'd4030), .Cin(1'b0), .S(ResX2), .Cout(CoutX2));  // ADJUST
   sg13_or2_2  CombCoutX(.A(CoutX), .B(CoutX2), .X(newCX));
-  sg13_sdfrbpq_1 dffX(.Q(CX), .D(CX), .SCD(newCX), .SCE(en), .RESET_B(rst), .CLK(clk));
-  mux2_x18 selRes( .sel(newCX), .if0(ResX), .if1(ResX2), .res(XM));
+  sg13_sdfrbpq_1 dffCX(.Q(CX), .D(CX), .SCD(newCX), .SCE(en), .RESET_B(rst), .CLK(clk));
+  mux2_x18 selResX( .sel(newCX), .if0(ResX), .if1(ResX2), .res(XM));
   Register_InitX RegX(.clk(clk), .rst(rst), .en(en), .D(XM), .Q(X));
 
   // "Y" path:
-  Register_InitY RegY(.clk(clk), .rst(rst), .en(en), .D(Y), .Q(Y));   // .D(Y) /!\
+  assign OpX  = X;
+  assign OpY  = Y;
+  assign CinX = CY;
+  Add18 AddX(.A(OpX), .B(OpY), .Cin(CinY), .S(ResY), .Cout(CoutY));
+  Add18 AddXAdj(.A(ResY), .B(18'd4030), .Cin(1'b0), .S(ResY2), .Cout(CoutY2));  // ADJUST
+  sg13_or2_2  CombCoutY(.A(CoutY), .B(CoutY2), .X(newCY));
+  sg13_sdfrbpq_1 dffCY(.Q(CY), .D(CY), .SCD(newCY), .SCE(en), .RESET_B(rst), .CLK(clk));
+  mux2_x18 selRes( .sel(newCY), .if0(ResY), .if1(ResY2), .res(YM));
+  Register_InitY RegY(.clk(clk), .rst(rst), .en(en), .D(YM), .Q(Y));
 endmodule
 
 ////////////////////////////////////////////////////////////////////
@@ -428,10 +435,7 @@ module gPEAC18_descrambler_RB3(
   wire [17:0] OPM;
   wire [17:0] OPB2;
   wire [17:0] ResA, ResA2, AM;
-  wire CA, CinA, CoutA,
-        error_Modulus, error;
-  Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
-
+  wire CA, CinA, CoutA;
   /* verilator lint_off UNUSEDSIGNAL */
   wire _unused, _unused2;
   /* verilator lint_on UNUSEDSIGNAL */
@@ -444,7 +448,11 @@ module gPEAC18_descrambler_RB3(
   Add18 AddA(.A(OPM), .B(OPB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
   Add18 AddAM(.A(18'd258114), .B(ResA), .Cin(1'b0), .S(ResA2), .Cout(_unused2));
   mux2_x18 selRes( .sel(CoutA), .if0(ResA2), .if1(ResA), .res(AM));
+
+  wire error_Modulus, error;
+  Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
   sg13_or2_1 CombErr(.A(error_Modulus), .B(AM[17]), .X(error));         // combine the 2 errors
+
   dffen_x18 RegA(.clk(clk), .rst(rst), .en(en), .D({error, AM[16:0]}), .Q(A));  // No RESET, the initial random value gets flushed (but sim fails otherwise)
   sg13_sdfbbp_1 dffCA(.Q(CA), .D(CA), .SCD(CoutA), .SCE(en), .RESET_B(1'b1), .SET_B(rst), .CLK(clk), .Q_N(_unused));
   assign Message_out = A;  // available during the next cycle
