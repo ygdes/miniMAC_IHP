@@ -724,7 +724,7 @@ async def test_project(dut):
     dut._log.info("Descrambling Mode")
     for x in FullVectors:
       v = x[1]
-      await input_parameter(v, Encode, dut)  # Encode mode
+      await input_parameter(v, Decode, dut)  # Decode mode
       o = await output_parameter(dut)
       #print("[" + str(v) + ", "+str(o)+"],")
       assert x[0] == o
