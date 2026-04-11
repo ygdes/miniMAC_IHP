@@ -717,7 +717,7 @@ async def test_project(dut):
       v = x[0]
       await input_parameter(v, Encode, dut)
       o = await output_parameter(dut)
-      print(str(x[1]-o) + " [" + str(v) + ", "+str(o)+"],")
+      #print(str(x[1]-o) + " [" + str(v) + ", "+str(o)+"],")
       assert x[1] == o
     await ClockCycles(dut.clk, 6)
 
@@ -728,7 +728,7 @@ async def test_project(dut):
       v = x[1]
       await input_parameter(v, Decode, dut)
       o = await output_parameter(dut)
-      print(str(x[0]-o) + " [" + str(v) + ", "+str(o)+"],")
+      #print(str(x[0]-o) + " [" + str(v) + ", "+str(o)+"],")
       assert x[0] == o
     await ClockCycles(dut.clk, 6)
 
