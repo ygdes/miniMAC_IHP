@@ -428,42 +428,30 @@ module gPEAC18_descrambler_RB3(
   input  wire rst,
   input  wire en,
   input  wire [17:0] Scrambled_in, // 0 < data < modulus
-  output wire [17:0] Message_out   // C/D bit as Message_out[8], [17] is error
+  output wire [17:0] A   // C/D bit as Message_out[8], [17] is error
 );
   wire [17:0] A, B, T;
-  wire [17:0] OpM, OpB, OpT, OpB2;
   wire [17:0] ResA, ResA2, AM;
   wire [17:0] ResB, ResB2, BM;
-  wire CA, CinA, CoutA;
-  wire CB, CinB, CoutB, CoutB2, newCB;
+  wire CA, CoutA;
+  wire CB, CoutB, CoutB2, newCB;
   wire error_Modulus, error;
   /* verilator lint_off UNUSEDSIGNAL */
   wire _unused, _unused2;
   /* verilator lint_on UNUSEDSIGNAL */
   
   // "A" path:
-  assign OpM = Scrambled_in;
-  assign OpB2 = ~B;
-  assign CinA = CA;
-
-  Add18 AddA(.A(OpM), .B(OpB2), .Cin(CinA), .S(ResA), .Cout(CoutA));
+  Add18 AddA(.A(Scrambled_in), .B(~B), .Cin(CA), .S(ResA), .Cout(CoutA));
   Add18 AddAM(.A(18'd258114), .B(ResA), .Cin(1'b0), .S(ResA2), .Cout(_unused2));
   mux2_x18 selRes( .sel(CoutA), .if0(ResA2), .if1(ResA), .res(AM));
-
   Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
   sg13_or2_1 CombErr(.A(error_Modulus), .B(AM[17]), .X(error));         // combine the 2 errors
-
   dffen_x18 RegA(.clk(clk), .rst(rst), .en(en), .D({error, AM[16:0]}), .Q(A));  // No RESET, the initial random value gets flushed (but sim fails otherwise)
   sg13_sdfbbp_1 dffCA(.Q(CA), .D(CA), .SCD(CoutA), .SCE(en), .RESET_B(1'b1), .SET_B(rst), .CLK(clk), .Q_N(_unused));
-  assign Message_out = A;  // available during the next cycle
 
   // "B" path:
-  Register_InitX RegT(.clk(clk), .rst(rst), .en(en), .D(Scrambled_in), .Q(T));
-  assign OpB  = B;
-  assign OpT  = T;
-  assign CinB = CB;
-  
-  Add18 AddB(.A(OpB), .B(OpT), .Cin(CinB), .S(ResB), .Cout(CoutB));
+  Register_InitX RegT(.clk(clk), .rst(rst), .en(en), .D(Scrambled_in), .Q(T));  
+  Add18 AddB(.A(B), .B(T), .Cin(CB), .S(ResB), .Cout(CoutB));
   Add18 AddBAdj(.A(ResB), .B(18'd4030), .Cin(1'b0), .S(ResB2), .Cout(CoutB2));  // ADJUST
   sg13_or2_2  CombCoutB(.A(CoutB), .B(CoutB2), .X(newCB));
   sg13_sdfrbpq_1 dffCB(.Q(CB), .D(CB), .SCD(newCB), .SCE(en), .RESET_B(rst), .CLK(clk));
