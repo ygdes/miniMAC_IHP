@@ -226,6 +226,7 @@ module a22o_fo_x9(
   sg13_inv_1 in8(.Y(Y[8]), .A(t[8]));
 endmodule
 
+/*
 module or16(
     input  wire [15:0] A,
     output wire        Y
