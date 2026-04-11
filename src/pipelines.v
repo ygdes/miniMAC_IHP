@@ -6,6 +6,7 @@
     easily swappable so it's integrated in project.v
     
     version lun. 06 avril 2026 00:25:08 CEST : conversion to generic IHP gates
+    version sam. 11 avril 2026 04:23:56 CEST : module pipe_full is all good.
 */
 
 /* Short circuit config : */
