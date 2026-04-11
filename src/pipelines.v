@@ -393,7 +393,7 @@ module pipe_full(
 
   gPEAC18_descrambler_RB3 dePEAC(
       .clk(clk), .rst(rst), .en(dePEAC_en),
-      .Scrambled_in(HammerDec_result), .Message_out(gPEACdec_result));
+      .Scrambled_in(HammerDec_result), .A(gPEACdec_result));
 
   mux2_x18 selDec18( .sel(Decode), .if0(tmpSel), .if1(gPEACdec_result), .res(LastWord) );
   sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
