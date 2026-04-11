@@ -363,9 +363,9 @@ module gPEAC18_descrambler_RB2(
         error_Modulus, error;
   Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
 
-  /* verilator lint_off UNUSEDSIGNAL 
+   verilator lint_off UNUSEDSIGNAL 
   wire _unused, _unused2;
-  /* verilator lint_on UNUSEDSIGNAL 
+   verilator lint_on UNUSEDSIGNAL 
 
   // "A" path:
   assign OPM = Scrambled_in;
