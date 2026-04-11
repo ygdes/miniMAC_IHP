@@ -6,6 +6,7 @@
   mer. 11 mars 2026 20:35:38 CET : version sans fanout manuel
   sam. 28 mars 2026 01:23:55 CET : conversion to iHP SG2CMOS5L
   lun. 06 avril 2026 00:25:08 CEST : conversion to generic IHP gates
+  sam. 11 avril 2026 04:46:25 CEST : cleanup
 */
 
 module mux2_x18(
@@ -139,14 +140,14 @@ module dff_x9(
   sg13_dfrbpq_1 dff7(.Q(Q[7]), .D(D[7]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbpq_1 dff8(.Q(Q[8]), .D(D[8]), .RESET_B(rst), .CLK(clk));
 endmodule
-
+/*
 module dffn_x9(
     input  wire clk,
     input  wire rst,
     input  wire [8:0] D,
     output wire [8:0] QN
 );
-  /* verilator lint_off PINCONNECTEMPTY */
+  /* verilator lint_off PINCONNECTEMPTY 
   sg13_dfrbp_2 dffn0(.Q(), .Q_N(QN[0]), .D(D[0]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn1(.Q(), .Q_N(QN[1]), .D(D[1]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn2(.Q(), .Q_N(QN[2]), .D(D[2]), .RESET_B(rst), .CLK(clk));
@@ -156,7 +157,7 @@ module dffn_x9(
   sg13_dfrbp_2 dffn6(.Q(), .Q_N(QN[6]), .D(D[6]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn7(.Q(), .Q_N(QN[7]), .D(D[7]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn8(.Q(), .Q_N(QN[8]), .D(D[8]), .RESET_B(rst), .CLK(clk));
-  /* verilator lint_on PINCONNECTEMPTY */
+  /* verilator lint_on PINCONNECTEMPTY 
 endmodule
 
 module a22oi_x9(
@@ -194,6 +195,7 @@ module a22oi_fo_x9(
   sg13_a22oi_1 a22oi_7(.A1(A1), .A2(A2[7]), .B1(B1), .B2(B2[7]), .Y(Y[7]));
   sg13_a22oi_1 a22oi_8(.A1(A1), .A2(A2[8]), .B1(B1), .B2(B2[8]), .Y(Y[8]));
 endmodule
+*/
 
 module a22o_fo_x9(
     input             A1,
@@ -235,6 +237,7 @@ module or16(
   sg13_nor4_1 nor3(.Y(t[3]), .A(A[12]), .B(A[13]), .C(A[14]), .D(A[15]));
   sg13_nand4_1 nand4(.Y(Y), .A(t[0]), .B(t[1]), .C(t[2]), .D(t[3]));
 endmodule
+*/
 
 module nor16(
     input  wire [15:0] A,
@@ -332,7 +335,7 @@ module Decode_Hamming_early(
   dffen_x18 delayDec(.clk(clk), .rst(rst), .D(HammerDec_result), .Q(HammerDec_delayed), .en(HammEn));
 endmodule
 
-
+/*
 module Encode_Hamming_empty(
     input  wire clk,
     input  wire rst,
@@ -354,3 +357,4 @@ module Decode_Hamming_empty(
   wire _unused = &{ clk, rst, HammEn, 1'b0};
   assign HammOut = HammIn;
 endmodule
+*/
