@@ -6,6 +6,8 @@
 
   version sam. 28 mars 2026 17:49:24 CET: coversion to CMOS5L
   version lun. 06 avril 2026 00:25:08 CEST : conversion to generic IHP gates
+  version sam. 11 avril 2026 04:42:03 CEST : rebuild OK !
+
 */
 
 /* This module compares a 18-bit number to the modulus.
