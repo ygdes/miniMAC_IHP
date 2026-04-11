@@ -41,6 +41,8 @@ async def reset_state(dut):
   await ClockCycles(dut.clk, 3)
 
 async def input_parameter(val, mode, dut):
+  if (val & 131072) != 0 and (mode & Encode) !=0:
+    print(str(val)+" >= 131072, encoding lost")
   dut.ui_in.value = val & 255
   # MSB and DEN set
   dut.uio_in.value = mode | DEN | (Din_8 & (val >> 1))
@@ -458,10 +460,7 @@ FullVectors=[
 [230468, 261483],
 [89606, 115502],
 [226419, 97405],
-[95327, 36297]
-]
-
-TheRestOfTheFullVectors=[
+[95327, 36297],
 [101049, 19124],
 [102721, 207453],
 [241186, 188402],
