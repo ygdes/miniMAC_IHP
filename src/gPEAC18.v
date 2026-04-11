@@ -385,16 +385,15 @@ endmodule
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-module gPEAC18_scrambler_RB3(
+module gPEAC18_scrambler(
   input  wire clk,
   input  wire rst,
   input  wire en,
   input  wire [16:0] Message_in, // C/D bit as Message_in[8]
   output wire [17:0] X // 0 < data < modulus
 );
-  wire [17:0] Y, OpM, OpY2;
   wire [17:0] ResX, ResX2, XM;
-  wire [17:0] ResY, ResY2, YM;
+  wire [17:0] ResY, ResY2, YM, Y;
   wire CX, CoutX, CoutX2, newCX;
   wire CY, CoutY, CoutY2, newCY;
 
