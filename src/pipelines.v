@@ -364,7 +364,7 @@ module pipe_full(
   //                              \__emPEAC       \__output ready
   sg13_and2_2 AndEncOK(.A(Din_OK), .B(Encode), .X(encOK));
   sg13_dfrbpq_1 dff_enc(.Q(emPEAC_OK), .D(encOK), .RESET_B(rst), .CLK(clk));
-  gPEAC18_scrambler_RB3 emPEAC(
+  gPEAC18_scrambler emPEAC(
       .clk(clk), .rst(rst), .en(encOK),
       .Message_in(FirstWord[16:0]), .X(gPEACenc_result));
 
@@ -391,7 +391,7 @@ module pipe_full(
       .clk(clk), .rst(rst), .HammEn(dePEAC_en),
       .HammIn(HammerDec_operand), .HammOut(HammerDec_result));
 
-  gPEAC18_descrambler_RB3 dePEAC(
+  gPEAC18_descrambler dePEAC(
       .clk(clk), .rst(rst), .en(dePEAC_en),
       .Scrambled_in(HammerDec_result), .A(gPEACdec_result));
 
