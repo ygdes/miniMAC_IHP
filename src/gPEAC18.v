@@ -392,17 +392,14 @@ module gPEAC18_scrambler_RB3(
   input  wire [16:0] Message_in, // C/D bit as Message_in[8]
   output wire [17:0] X // 0 < data < modulus
 );
-  wire [17:0] Y, OpM, OpX, OpY, OpY2;
+  wire [17:0] Y, OpM, OpY2;
   wire [17:0] ResX, ResX2, XM;
   wire [17:0] ResY, ResY2, YM;
-  wire CX, CinX, CoutX, CoutX2, newCX;
-  wire CY, CinY, CoutY, CoutY2, newCY;
+  wire CX, CoutX, CoutX2, newCX;
+  wire CY, CoutY, CoutY2, newCY;
 
   // "X" path:
-  assign OpM  = {1'b0, Message_in};
-  assign OpY2 = Y;
-  assign CinX = CX;
-  Add18 AddX(.A(OpM), .B(OpY2), .Cin(CinX), .S(ResX), .Cout(CoutX));
+  Add18 AddX(.A({1'b0, Message_in}), .B(Y), .Cin(CX), .S(ResX), .Cout(CoutX));
   Add18 AddXAdj(.A(ResX), .B(18'd4030), .Cin(1'b0), .S(ResX2), .Cout(CoutX2));  // ADJUST
   sg13_or2_2  CombCoutX(.A(CoutX), .B(CoutX2), .X(newCX));
   sg13_sdfrbpq_1 dffCX(.Q(CX), .D(CX), .SCD(newCX), .SCE(en), .RESET_B(rst), .CLK(clk));
@@ -410,10 +407,7 @@ module gPEAC18_scrambler_RB3(
   Register_InitX RegX(.clk(clk), .rst(rst), .en(en), .D(XM), .Q(X));
 
   // "Y" path:
-  assign OpX  = X;
-  assign OpY  = Y;
-  assign CinY = CY;
-  Add18 AddY(.A(OpX), .B(OpY), .Cin(CinY), .S(ResY), .Cout(CoutY));
+  Add18 AddY(.A(X), .B(Y), .Cin(CY), .S(ResY), .Cout(CoutY));
   Add18 AddYAdj(.A(ResY), .B(18'd4030), .Cin(1'b0), .S(ResY2), .Cout(CoutY2));  // ADJUST
   sg13_or2_2  CombCoutY(.A(CoutY), .B(CoutY2), .X(newCY));
   sg13_sdfrbpq_1 dffCY(.Q(CY), .D(CY), .SCD(newCY), .SCE(en), .RESET_B(rst), .CLK(clk));
@@ -422,8 +416,8 @@ module gPEAC18_scrambler_RB3(
 endmodule
 
 ////////////////////////////////////////////////////////////////////
-
-module gPEAC18_descrambler_RB3(
+// Final version:
+module gPEAC18_descrambler(
   input  wire clk,
   input  wire rst,
   input  wire en,
