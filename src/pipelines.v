@@ -364,7 +364,7 @@ module pipe_full(
   sg13_and2_2 AndEncOK(.A(Din_OK), .B(Encode), .X(encOK));
   sg13_dfrbpq_1 dff_enc(.Q(emPEAC_OK), .D(encOK), .RESET_B(rst), .CLK(clk));
   gPEAC18_scrambler_RB3 emPEAC(
-      .clk(clk), .rst(rst), .en(Din_OK),
+      .clk(clk), .rst(rst), .en(encOK),
       .Message_in(FirstWord[16:0]), .X(gPEACenc_result));
 
   Encode_Hamming_early Henc(
