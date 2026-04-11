@@ -430,7 +430,7 @@ module gPEAC18_descrambler_RB3(
   input  wire [17:0] Scrambled_in, // 0 < data < modulus
   output wire [17:0] A   // C/D bit as Message_out[8], [17] is error
 );
-  wire [17:0] A, B, T;
+  wire [17:0] B, T;
   wire [17:0] ResA, ResA2, AM;
   wire [17:0] ResB, ResB2, BM;
   wire CA, CoutA;
