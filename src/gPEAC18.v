@@ -52,10 +52,9 @@ module Compare_modulus_old(
   // Last stage
   sg13_and3_1 L4a3_3(.X( X), .A(t1),    .B(t2),    .C(t7));
 endmodule
-*/
 
 
-/* adjust : std_ulogic_vector(17 downto 0) := "000000111110111110"; -- 4030 = 262144 - modulus; */
+// adjust : std_ulogic_vector(17 downto 0) := "000000111110111110"; -- 4030 = 262144 - modulus;
 module ConstAdjOrPass(
     input  wire [17:0] A,
     input  wire C,
@@ -106,6 +105,7 @@ module ConstModOrNeg(
   sg13_nand2b_1 cstxb(.Y(Y[ 1]), .B(A[ 1]), .A_N(C));
   sg13_nor2_1   cstxa(.Y(Y[ 0]), .B(A[ 0]), .A(  C));
 endmodule
+*/
 
 /* a 18-bit adder, I have no mapped/optimised version available (yet)
    and I have no time left for such detail */
@@ -150,11 +150,11 @@ module Register_InitY(
   dffen_rs_x18 register(.clk(clk), .rst(R), .set(S), .en(en), .D(D), .Q(Q));
 endmodule
 
-
+/*
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
-module gPEAC18_scrambler(
+module gPEAC18_scrambler_old(
   input  wire clk,
   input  wire rst,
   input  wire Phase0,
@@ -194,7 +194,7 @@ endmodule
 
 ////////////////////////////////////////////////////////////////////
 
-module gPEAC18_descrambler(
+module gPEAC18_descrambler_old(
   input  wire clk,
   input  wire rst,
   input  wire Phase0,
@@ -291,9 +291,9 @@ module gPEAC18_descrambler_RB1(
   wire [17:0] OPB2;
   wire [17:0] ResA;
   wire CA, CinA, CoutA;
-  /* verilator lint_off UNUSEDSIGNAL */
+   verilator lint_off UNUSEDSIGNAL 
   wire _unused;
-  /* verilator lint_on UNUSEDSIGNAL */
+   verilator lint_on UNUSEDSIGNAL 
 
   // A path:
   assign OPM = Scrambled_in;
@@ -361,9 +361,9 @@ module gPEAC18_descrambler_RB2(
         error_Modulus, error;
   Compare_modulus cmp(.A(Scrambled_in), .X(error_Modulus));
 
-  /* verilator lint_off UNUSEDSIGNAL */
+  /* verilator lint_off UNUSEDSIGNAL 
   wire _unused, _unused2;
-  /* verilator lint_on UNUSEDSIGNAL */
+  /* verilator lint_on UNUSEDSIGNAL 
 
   // "A" path:
   assign OPM = Scrambled_in;
@@ -381,7 +381,7 @@ module gPEAC18_descrambler_RB2(
   // "B" path:
   Register_InitY RegB(.clk(clk), .rst(rst), .en(en), .D(B), .Q(B));   // /!\ loopback
 endmodule
-
+*/
 ////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
 
