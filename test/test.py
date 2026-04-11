@@ -3,8 +3,8 @@
 
 # Test the Hammer18 & gPEAC scrambler & descrambler in direct, encoding and decoding modes.
 
-enable_bypass = True
-enable_loopback = True
+enable_bypass = False
+enable_loopback = False
 enable_Hammer_encode = False
 enable_Hammer_decode = False
 enable_compare  = False # just a debug that worked for a while, no use for final circuit because it gets wired differenly
@@ -458,7 +458,10 @@ FullVectors=[
 [230468, 261483],
 [89606, 115502],
 [226419, 97405],
-[95327, 36297],
+[95327, 36297]
+]
+
+moreFullVectors=[ # the rest
 [101049, 19124],
 [102721, 207453],
 [241186, 188402],
