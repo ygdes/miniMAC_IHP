@@ -355,7 +355,7 @@ module pipe_full(
 
 // Encoding
   wire [17:0] HammerEnc_result, gPEACenc_result, tmpSel;
-  wire encOK, decOK, emPEAC_OK, Dout_Enc;
+  wire encOK, emPEAC_OK, Dout_Enc;
 
   //         encode____
   //                   \
