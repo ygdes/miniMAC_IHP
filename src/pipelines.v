@@ -9,7 +9,7 @@
     version sam. 11 avril 2026 04:23:56 CEST : module pipe_full is all good.
 */
 
-/* Short circuit config : */
+/* Short circuit config :
 module pipe_empty(
   input wire clk,
   input wire rst,
@@ -341,7 +341,7 @@ module pipe_RB3(
   mux2_x18 selDec18( .sel(Decode), .if0(tmpSel), .if1(gPEACdec_result), .res(LastWord) );
   sg13_mux2_2 selDecEn(.S(Decode), .A0(Dout_Enc), .A1(dePEAC_OK), .X(Dout_OK));
 endmodule
-
+*/
 
 module pipe_full(
   input wire clk,
