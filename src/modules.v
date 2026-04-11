@@ -147,7 +147,7 @@ module dffn_x9(
     input  wire [8:0] D,
     output wire [8:0] QN
 );
-  /* verilator lint_off PINCONNECTEMPTY 
+   verilator lint_off PINCONNECTEMPTY 
   sg13_dfrbp_2 dffn0(.Q(), .Q_N(QN[0]), .D(D[0]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn1(.Q(), .Q_N(QN[1]), .D(D[1]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn2(.Q(), .Q_N(QN[2]), .D(D[2]), .RESET_B(rst), .CLK(clk));
@@ -157,7 +157,7 @@ module dffn_x9(
   sg13_dfrbp_2 dffn6(.Q(), .Q_N(QN[6]), .D(D[6]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn7(.Q(), .Q_N(QN[7]), .D(D[7]), .RESET_B(rst), .CLK(clk));
   sg13_dfrbp_2 dffn8(.Q(), .Q_N(QN[8]), .D(D[8]), .RESET_B(rst), .CLK(clk));
-  /* verilator lint_on PINCONNECTEMPTY 
+   verilator lint_on PINCONNECTEMPTY 
 endmodule
 
 module a22oi_x9(
