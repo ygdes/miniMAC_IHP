@@ -461,7 +461,7 @@ FullVectors=[
 [95327, 36297]
 ]
 
-moreFullVectors=[ # the rest
+TheRestOfTheFullVectors=[
 [101049, 19124],
 [102721, 207453],
 [241186, 188402],
