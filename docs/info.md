@@ -22,11 +22,11 @@ These very different types of circuits are complementary, together they provide 
 
 ## How it works
 
-This version of gPEAC operates in one cycle, implementing two adders to first compute the sums, then to adjust the modulus. The Hammer18 circuit requires one depth of XOR, but at different places:
+This version of gPEAC18 operates in one cycle, implementing two adders to first compute the sums, then to adjust the modulus. The Hammer18 circuit requires one depth of XOR, but at different places:
 
-- For encoding, the input data goes through gPEAC then Hammer is inserted at the end of the last cycle.
+- For encoding, the input data goes through gPEAC18 then through Hammer18.
 
-- For decoding, the scrambled data goes through Hammer at the start of the first cycle of gPEAC descrambling.
+- For decoding, the scrambled data goes through Hammer18 before descrambling by gPEAC18.
 
 Due to pin constraints, the 18-bit data words are transmitted in two cycles with 9-bit half-words. Counting input and output (2 cycles each), the overall latency is 5 cycles, following a sequence that is internally started when data is initially input with Den=1. Even at the low default 50MHz clock speed, that's still a bandwidth of 25M×18=450Mbps: fast enough to oversaturate a Cat5 twisted pair. P&R have been turned up to 200MHz, faster than the pins, so there is some margin.
 
