@@ -63,7 +63,7 @@ The outputs:
 ![](chronogramme_decode.png)
 
 Notes :
-- internal delay from input to output:
+- Internal delay from input to output:
   - pass-through: 1 cycle
   - encode, decode: 2 cycles
   - loopback : 3 cycles
