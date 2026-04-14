@@ -1,4 +1,4 @@
-This project is the 3rd version of miniMAC, but this time using [a crude PDK abstraction layer](https://github.com/YannGuidon/IHP_SG13_cells) and I'll make it work as intended.
+This project is the 3rd version of miniMAC, but this time using [a crude PDK abstraction layer](https://github.com/YannGuidon/IHP_SG13_cells) and simulations say it works as intended.
 
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
 
@@ -34,4 +34,4 @@ This version should finally work as intended, still using an experimental PDK un
 
 ## TODO
 
-enable/disable Hammer with a separate RESET pin
+enable/disable Hammer with a separate RESET pin ?
