@@ -63,6 +63,10 @@ The outputs:
 ![](chronogramme_decode.png)
 
 Notes :
+- internal delay from input to output:
+  - pass-through: 1 cycle
+  - encode, decode: 2 cycles
+  - loopback : 3 cycles
 - Data half-words are clock-sourced, to allow seamless chaining of multiple chips.
 - Decoding errors (and Zero) are signalled but not managed/acted upon, a FSM and appropriate circuits must reset the registers.
 - The input/plaintext word contains the C/D bit and an unused bit. C/D should be on Dx8 of the first halfword for best detection.
