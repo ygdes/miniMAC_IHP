@@ -39,7 +39,7 @@ This tile contains four main pipelined units, sequenced by a shift register:
 
 The encode and decode units can be tested separately or together in the "loopback" mode.
 
-![](miniMAC_datapath_w.png)
+![](miniMAC_datapath_v3w.png)
 
 ## How to test
 
